@@ -9,7 +9,7 @@ const prefix = '$';
 var variable;
 //Ready event, is used to see if the bot is connected to the server
 client.on("ready", () =>{
-    console.log(`Logged in as ${client.user.tag}`)
+    console.log(`Logged in as ${client.user.tag}`);
 });
 
 
@@ -28,6 +28,14 @@ client.on("message", msg => {
     if(msg.content === `${prefix}suggestion`)
     {
         msg.reply(`Send a message to <@!272479217118347284> with the suggestion`)
+    }
+    if(msg.content === '!play fuin fuan')
+    {
+        const response = msg.member;
+
+        msg.author.send(`Refina tus gustos musicales y despues te entramos ${response}`);
+        msg.member.kick();
+        msg.reply("!stop")
     }
     if(msg.content.indexOf(' ')>-1 && msg.content.split(' ')[0] === `${prefix}weather`)
     {
