@@ -13,10 +13,8 @@ client.on("ready", () =>{
 });
 
 
-
-
 //Respond to a message
-client.on("message", msg => {
+client.on("messageCreate", msg => {
     if(msg.content === `${prefix}help`)
     {
         msg.reply(`>>> **These are the commands available:**\n- $help 👍\n- $creator 💻\n- $suggestion 💯 \n- $weather city_name ⛅`)
@@ -29,17 +27,18 @@ client.on("message", msg => {
     {
         msg.reply(`Send a message to <@!272479217118347284> with the suggestion`)
     }
-    if(msg.content === '!play fuin fuan')
+    if(msg.content === '!play fuin fuan' || msg.content === '!play bizcochito' || msg.content === '!play chicken teriyaki' || msg.content === '!play linda' || msg.content === '!play plan a')
     {
         const response = msg.member;
 
         msg.author.send(`Refina tus gustos musicales y despues te entramos ${response}`);
         msg.member.kick();
-        msg.reply("!stop")
+        msg.channel.send("!stop");
     }
     if(msg.content.indexOf(' ')>-1 && msg.content.split(' ')[0] === `${prefix}weather`)
     {
-        const city_name = msg.content.split(' ');
+        try {
+            const city_name = msg.content.split(' ');
         const city_result = city_name[1].replace('_',' ');
         if(city_name.indexOf("_")>-1)
         {
@@ -47,7 +46,6 @@ client.on("message", msg => {
                 response.on("data",function(data){
                     const conversionJSON = JSON.parse(data);
                     const status = conversionJSON.status;
-                    console.log(status);
                     const temperature  = conversionJSON.main.temp;
                     const name = conversionJSON.name;
                     const weather = conversionJSON.weather[0].main;
@@ -62,7 +60,6 @@ client.on("message", msg => {
             response.on("data",function(data){
                 const conversionJSON = JSON.parse(data);
                 const status = conversionJSON.status;
-                console.log(status);
                 const temperature  = conversionJSON.main.temp;
                 const name = conversionJSON.name;
                 const weather = conversionJSON.weather[0].main;
@@ -72,6 +69,10 @@ client.on("message", msg => {
             })
         })
         }
+        } catch (error) {
+            console.log(error);
+        }
+        
     }
 });
 
