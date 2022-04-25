@@ -42,7 +42,7 @@ client.on("messageCreate", msg => {
         const city_result = city_name[1].replace('_',' ');
         if(city_name.indexOf("_")>-1)
         {
-            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name[1]}&units=metric&appid=d49d61905af5dd1344233c59afc65a68`,function(response){
+            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name[1]}&units=metric&appid=`,function(response){
                 response.on("data",function(data){
                     const conversionJSON = JSON.parse(data);
                     const status = conversionJSON.status;
@@ -56,7 +56,7 @@ client.on("messageCreate", msg => {
             })
         }
         else{
-            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_result}&units=metric&appid=d49d61905af5dd1344233c59afc65a68`,function(response){
+            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_result}&units=metric&appid=`,function(response){
             response.on("data",function(data){
                 const conversionJSON = JSON.parse(data);
                 const status = conversionJSON.status;
