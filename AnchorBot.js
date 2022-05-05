@@ -2,6 +2,7 @@
 require('dotenv').config();
 const https = require("https");
 const Discord = require("discord.js");
+const { info } = require('console');
 const client = new Discord.Client({intents: 32767});
 const prefix = '$';
 const content = "";
@@ -50,35 +51,21 @@ client.on("messageCreate", msg => {
     }
     else if(msg.content.indexOf(' ')>-1 && msg.content.split(' ')[0] === `${prefix}weather`)
     {
-        try {
-            const city_name = msg.content.split(' ');
-            const city_result = city_name[1].replace('_',' ');
+            const city_name = msg.content.replace(`${prefix}weather`,"");
             const apiKey = process.env.APPID;
-            if(city_name.indexOf("_")>-1)
-            {
-                https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name[1]}&units=metric&appid=${apiKey}`,function(response){
+                https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name}&units=metric&appid=${apiKey}`,function(response){
                     response.on("data",function(data){
-                        const information = JSON.parse(data);  
-                        let info = new Weather(information);
-                        info.toString();
-                        msg.reply(info.getMessage());
-                        
-                    })
-                })
-            }
-            else{
-                https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_result}&units=metric&appid=${apiKey}`,function(response){
-                    response.on("data",function(data){
-                        const information = JSON.parse(data);  
-                        let info = new Weather(information);
-                        info.toString();
-                        msg.reply(info.getMessage());
+                        const information = JSON.parse(data);
+                        try{
+                            const info = new Weather(information);
+                            info.toString();
+                            msg.reply(info.getMessage());
+                        } 
+                        catch(error){
+                            msg.reply("Bad Request, try again (It could be a typo)");
+                        }
                 })
             })
-            }
-        } catch (error) {
-            msg.reply("There was an error, please try again");
-        }
         
     }
     //Doing a split on spaces in the main command to see if the command exist
