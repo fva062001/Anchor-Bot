@@ -1,13 +1,13 @@
 //Discord js library
 require('dotenv').config();
 
- 
 const https = require("https");
 const Discord = require("discord.js");
-const { measureMemory } = require('vm');
 const client = new Discord.Client({intents: 32767});
 const prefix = '$';
+const content = "";
 const music = ["!play bizcochito","!play chicken teriyaki","!play fuin fuan","!play plan a"];
+const commands = [`${prefix}help`,`${prefix}weather ${content}`,`${prefix}creator`,`${prefix}suggestion ${content}`];
 //Ready event, is used to see if the bot is connected to the server
 client.on("ready", () =>{
     console.log(`Logged in as ${client.user.tag}`);
@@ -16,9 +16,9 @@ client.on("ready", () =>{
 
 //Respond to a message
 client.on("messageCreate", msg => {
-    if(msg.content === `${prefix}help`)
+        if(msg.content === `${prefix}help`)
     {
-        msg.reply(`>>> **These are the commands available:**\n- $help 👍\n- $creator 💻\n- $suggestion 💯 \n- $weather city_name ⛅`)
+        msg.reply(`>>> **These are the commands available:**\n- $help 👍\n- $creator 💻\n- $suggestion message 💯 \n- $weather city_name ⛅`)
     }
     if(msg.content === `${prefix}creator`)
     {
@@ -37,7 +37,7 @@ client.on("messageCreate", msg => {
             msg.reply("Suggestion sent 👌")
         }catch(err)
         {
-            msg.reply("My creator is not in this discord, reach out Tyr#5344");
+            msg.reply("There was an error, reach out Tyr#5344");
         }
 
     }
@@ -55,10 +55,24 @@ client.on("messageCreate", msg => {
             const city_name = msg.content.split(' ');
             const city_result = city_name[1].replace('_',' ');
             const apiKey = process.env.APPID;
-        if(city_name.indexOf("_")>-1)
-        {
-            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name[1]}&units=metric&appid=${apiKey}`,function(response){
-                response.on("data",function(data){
+            if(city_name.indexOf("_")>-1)
+            {
+                https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_name[1]}&units=metric&appid=${apiKey}`,function(response){
+                    response.on("data",function(data){
+                        const conversionJSON = JSON.parse(data);
+                        const status = conversionJSON.status;
+                        const temperature  = conversionJSON.main.temp;
+                        const name = conversionJSON.name;
+                        const weather = conversionJSON.weather[0].main;
+                        const desc = conversionJSON.weather[0].description;
+                        const country = conversionJSON.sys.country;
+                        msg.reply(`**Weather on ${name} ${country} ⛅** \n- Temperature: ${temperature} C \n- Weather: ${weather} \n- Description: ${desc}`);
+                    })
+                })
+            }
+            else{
+                https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_result}&units=metric&appid=${apiKey}`,function(response){
+                    response.on("data",function(data){
                     const conversionJSON = JSON.parse(data);
                     const status = conversionJSON.status;
                     const temperature  = conversionJSON.main.temp;
@@ -69,26 +83,19 @@ client.on("messageCreate", msg => {
                     msg.reply(`**Weather on ${name} ${country} ⛅** \n- Temperature: ${temperature} C \n- Weather: ${weather} \n- Description: ${desc}`);
                 })
             })
-        }
-        else{
-            https.get(`https://api.openweathermap.org/data/2.5/weather?q=${city_result}&units=metric&appid=${apiKey}`,function(response){
-            response.on("data",function(data){
-                const conversionJSON = JSON.parse(data);
-                const status = conversionJSON.status;
-                const temperature  = conversionJSON.main.temp;
-                const name = conversionJSON.name;
-                const weather = conversionJSON.weather[0].main;
-                const desc = conversionJSON.weather[0].description;
-                const country = conversionJSON.sys.country;
-                msg.reply(`**Weather on ${name} ${country} ⛅** \n- Temperature: ${temperature} C \n- Weather: ${weather} \n- Description: ${desc}`);
-            })
-        })
-        }
+            }
         } catch (error) {
-            console.log(error);
+            msg.reply("There was an error, please try again");
         }
         
     }
+    //Doing a split on spaces in the main command to see if the command exist
+    if(msg.content.startsWith(prefix) && !commands.includes(msg.content.split(" ")[0]))
+    {
+        msg.reply("Unknown command, please use $help to see the commands available");
+    }
+
+
 });
 
 //Logging to the server
