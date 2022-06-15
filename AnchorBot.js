@@ -1,6 +1,7 @@
 //Discord js library
 require('dotenv').config();
 const https = require("https");
+const axios = require("axios");
 const Discord = require("discord.js");
 const { info } = require('console');
 const client = new Discord.Client({intents: 32767});
@@ -18,7 +19,7 @@ client.on("ready", () =>{
 client.on("messageCreate", msg => {
     if(msg.content === `${prefix}help`)
     {
-        msg.reply(`>>> **These are the commands available:**\n- $help 👍\n- $creator 💻\n- $suggestion message 💯 \n- $weather city_name ⛅`)
+        msg.reply(`>>> **These are the commands available:**\n- $help 👍\n- $creator 💻\n- $suggestion message 💯 \n- $weather city_name ⛅ \n- $joke 🥳`)
     }
     else if(msg.content === `${prefix}creator`)
     {
@@ -67,6 +68,28 @@ client.on("messageCreate", msg => {
                 })
             })
         
+    }
+    else if(msg.content === `${prefix}joke`)
+    {
+
+        const options = {
+          method: 'GET',
+          url: 'https://dad-jokes.p.rapidapi.com/random/joke',
+          headers: {
+            'X-RapidAPI-Key': '5fcd72b67bmsh029627650c05aa4p12d0ddjsn0d15d0830542',
+            'X-RapidAPI-Host': 'dad-jokes.p.rapidapi.com'
+          }
+        };
+        
+        axios.request(options).then(function (response) {
+            msg.reply(`A joke for you: \n${response.data.body[0].setup} \n${response.data.body[0].punchline} `);
+        }).catch(function (error) {
+            console.error(error);
+        });
+
+
+
+
     }
     //Doing a split on spaces in the main command to see if the command exist
     else if(msg.content.startsWith(prefix) && !commands.includes(msg.content.split(" ")[0]))
